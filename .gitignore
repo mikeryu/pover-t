@@ -104,3 +104,5 @@ ENV/
 .DS_Store
 *.un~
 
+# PyCharm IDE config
+.idea/
