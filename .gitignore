@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# os generated files
+.DS_Store
