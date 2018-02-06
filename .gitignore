@@ -100,5 +100,7 @@ ENV/
 # mypy
 .mypy_cache/
 
-# os generated files
+# macos generated files
 .DS_Store
+*.un~
+
