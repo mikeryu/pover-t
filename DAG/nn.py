@@ -175,14 +175,16 @@ print(submission.tail())
 
 print("\n\n=================== KERAS  ==========================\n\n")
 
-convertedDf = pd.DataFrame()
-
+rowNum = 0
+colNum = 0
 for column in a_train:
-    # convertedDf[column] = 0
+    rowNum = 0
     for row in a_train[column]:
-        convertedDf.loc[row,column] = abs(hash(row)) % (10 ** 8)
+        a_train.iloc[rowNum,colNum] = abs(hash(row)) % (10 ** 8)
+        rowNum += 1
+    colNum += 1
 
-convertedDf.to_csv("/Users/dewitte/csc570/pover-t/DAG/df.csv")
+a_train.to_csv("data/train/df.csv")
 
 #Keras tutorial
 # Need to convert pandas dataframe to numpy array for Keras input
