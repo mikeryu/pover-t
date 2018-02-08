@@ -1,7 +1,6 @@
 # %matplotlib inline
 
 import os
-
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -9,19 +8,12 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestClassifier
+from keras.models import Sequential
+from keras.layers import Dense
 
 
 # data directory
 DATA_DIR = os.path.join('../..', 'pover-t', 'data')
-
-# data_paths = {'A': {'train': os.path.join(DATA_DIR, 'A', 'A_hhold_train.csv'), 
-#                     'test':  os.path.join(DATA_DIR, 'A', 'A_hhold_test.csv')}, 
-#               
-#               'B': {'train': os.path.join(DATA_DIR, 'B', 'B_hhold_train.csv'), 
-#                     'test':  os.path.join(DATA_DIR, 'B', 'B_hhold_test.csv')}, 
-#               
-#               'C': {'train': os.path.join(DATA_DIR, 'C', 'C_hhold_train.csv'), 
-#                     'test':  os.path.join(DATA_DIR, 'C', 'C_hhold_test.csv')}}
 
 data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_hhold_train.csv'), 
                     'test':  os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')}, 
@@ -31,6 +23,7 @@ data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_hhold_train.csv'
               
               'C': {'train': os.path.join(DATA_DIR, 'train', 'C_hhold_train.csv'), 
                     'test':  os.path.join(DATA_DIR, 'test', 'C_hhold_test.csv')}}
+
 # load training data
 a_train = pd.read_csv(data_paths['A']['train'], index_col='id')
 b_train = pd.read_csv(data_paths['B']['train'], index_col='id')
@@ -118,6 +111,8 @@ def train_model(features, labels, **kwargs):
     
     return model
 
+
+
 print("Train model a")
 model_a = train_model(aX_train, ay_train)
 print("Train model b")
@@ -173,11 +168,36 @@ print(submission.head())
 print("\nSubmission tail:")
 print(submission.tail())
 
-print("Converting to csv for submission...")
-submission.to_csv('random_forest_submission.csv')
-print("All done")
+#print("Converting to csv for submission...")
+#submission.to_csv('nn_submission.csv')
+#print("All done")
 
 
+
+#Keras tutorial
+# Initialize the constructor
+model = Sequential()
+
+# Add an input layer
+model.add(Dense(12, activation='relu', input_shape=(11,)))
+# Add one hidden layer
+model.add(Dense(8, activation='relu'))
+# Add an output layer
+model.add(Dense(1, activation='sigmoid'))
+
+model.output_shape
+model.summary()
+model.get_config()
+model.get_weights()
+
+# Compile the model and fit the model to the data
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+#model.fit(X_train, y_train,epochs=20, batch_size=1, verbose=1)
+
+#y_pred = model.predict(test_set)
 
 
 
