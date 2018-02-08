@@ -8,8 +8,8 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestClassifier
-from keras.models import Sequential
-from keras.layers import Dense
+from keras.models import Sequential, Model
+from keras.layers import Dense, Input
 
 
 # data directory
@@ -37,12 +37,12 @@ print("\n\n=============================================\n\n")
 print("C Training")
 print(c_train.head())
 
-a_train.poor.value_counts().plot.bar(title='Number of Poor for country A')
-plt.show()
-b_train.poor.value_counts().plot.bar(title='Number of Poor for country B')
-plt.show()
-c_train.poor.value_counts().plot.bar(title='Number of Poor for country C')
-plt.show()
+#a_train.poor.value_counts().plot.bar(title='Number of Poor for country A')
+#plt.show()
+#b_train.poor.value_counts().plot.bar(title='Number of Poor for country B')
+#plt.show()
+#c_train.poor.value_counts().plot.bar(title='Number of Poor for country C')
+#plt.show()
 
 
 print("\n\n=============================================\n\n")
@@ -173,13 +173,30 @@ print(submission.tail())
 #print("All done")
 
 
+print("\n\n=================== KERAS  ==========================\n\n")
+#for column in a_train:
+for row in a_train['maLAYXwi']:
+    abs(hash(a_train[row]['maLAYXwi'])) % (10 ** 8)
+
+#a_train.to_csv("/Users/dewitte/csc570/pover-t/DAG/df.csv")
 
 #Keras tutorial
+# Need to convert pandas dataframe to numpy array for Keras input
+#a_Xarr = a_train[['maLAYXwi']].as_matrix()
+#np.reshape(a_Xarr, (1, 8203))
+#print(a_Xarr)
+#print(a_Xarr.shape)
+#a_Yarr = a_train[['poor']].as_matrix()
+#print(a_Yarr)
+
 # Initialize the constructor
 model = Sequential()
+#modelInput = Input(shape=(8023, 1))
+#modelDense = Dense(8023)(modelInput)
+#model = Model(inputs=modelInput, outputs=modelDense)
 
 # Add an input layer
-model.add(Dense(12, activation='relu', input_shape=(11,)))
+model.add(Dense(12, activation='relu', input_shape=(1,)))
 # Add one hidden layer
 model.add(Dense(8, activation='relu'))
 # Add an output layer
@@ -195,7 +212,7 @@ model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-#model.fit(X_train, y_train,epochs=20, batch_size=1, verbose=1)
+# model.fit(a_Xarr, a_Yarr,epochs=20, batch_size=1, verbose=1)
 
 #y_pred = model.predict(test_set)
 
