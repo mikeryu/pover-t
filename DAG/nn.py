@@ -13,25 +13,25 @@ from keras.layers import Dense, Input
 
 
 # data directory
-DATA_DIR = os.path.join('../..', 'pover-t', 'data')
+DATA_DIR = os.path.join('../..', 'pover-t', 'DAG/data')
 
-data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_hhold_train.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')}, 
+data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_hhold_train_mod.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'A_hhold_test_mod.csv')}, 
               
-              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_hhold_train.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'B_hhold_test.csv')}, 
+              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_hhold_train_mod.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'B_hhold_test_mod.csv')}, 
               
-              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_hhold_train.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'C_hhold_test.csv')}}
+              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_hhold_train_mod.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'C_hhold_test_mod.csv')}}
 
-ind_data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_indiv_train.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'A_indiv_test.csv')}, 
+ind_data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_indiv_train_mod.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'A_indiv_test_mod.csv')}, 
               
-              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_indiv_train.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'B_indiv_test.csv')}, 
+              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_indiv_train_mod.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'B_indiv_test_mod.csv')}, 
               
-              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_indiv_train.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'C_indiv_test.csv')}}
+              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_indiv_train_mod.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'C_indiv_test_mod.csv')}}
 
 # load training data
 a_train = pd.read_csv(data_paths['A']['train'], index_col='id')
@@ -187,16 +187,16 @@ print(submission.tail())
 
 print("\n\n=================== KERAS  ==========================\n\n")
 
-rowNum = 0
-colNum = 0
-for column in a_indiv_train:
-    rowNum = 0
-    for row in a_indiv_train[column]:
-        a_indiv_train.iloc[rowNum,colNum] = abs(hash(row)) % (10 ** 8)
-        rowNum += 1
-    colNum += 1
+#rowNum = 0
+#colNum = 0
+#for column in a_indiv_train:
+    #rowNum = 0
+    #for row in a_indiv_train[column]:
+        #a_indiv_train.iloc[rowNum,colNum] = abs(hash(row)) % (10 ** 8)
+        #rowNum += 1
+    #colNum += 1
 
-a_indiv_train.to_csv("data/train/A_indiv_train_mod.csv")
+#a_indiv_train.to_csv("data/train/A_indiv_train_mod.csv")
 
 #Keras tutorial
 # Need to convert pandas dataframe to numpy array for Keras input
@@ -214,7 +214,7 @@ model = Sequential()
 #model = Model(inputs=modelInput, outputs=modelDense)
 
 # Add an input layer
-model.add(Dense(12, activation='relu', input_shape=(1,)))
+model.add(Dense(12, activation='relu', input_shape=(253,)))
 # Add one hidden layer
 model.add(Dense(8, activation='relu'))
 # Add an output layer
@@ -230,9 +230,6 @@ model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-# model.fit(a_Xarr, a_Yarr,epochs=20, batch_size=1, verbose=1)
+model.fit(aX_train, ay_train, epochs=20, batch_size=1, verbose=1)
 
 #y_pred = model.predict(test_set)
-
-
-
