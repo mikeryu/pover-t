@@ -13,25 +13,25 @@ from keras.layers import Dense, Input
 
 
 # data directory
-DATA_DIR = os.path.join('../..', 'pover-t', 'DAG/data')
+DATA_DIR = os.path.join('../..', 'pover-t', 'data')
 
-data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_hhold_train_mod.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'A_hhold_test_mod.csv')}, 
+data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_hhold_train.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')}, 
               
-              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_hhold_train_mod.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'B_hhold_test_mod.csv')}, 
+              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_hhold_train.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'B_hhold_test.csv')}, 
               
-              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_hhold_train_mod.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'C_hhold_test_mod.csv')}}
+              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_hhold_train.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'C_hhold_test.csv')}}
 
-ind_data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_indiv_train_mod.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'A_indiv_test_mod.csv')}, 
+ind_data_paths = {'A': {'train': os.path.join(DATA_DIR, 'train', 'A_indiv_train.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'A_indiv_test.csv')}, 
               
-              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_indiv_train_mod.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'B_indiv_test_mod.csv')}, 
+              'B': {'train': os.path.join(DATA_DIR, 'train', 'B_indiv_train.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'B_indiv_test.csv')}, 
               
-              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_indiv_train_mod.csv'), 
-                    'test':  os.path.join(DATA_DIR, 'test', 'C_indiv_test_mod.csv')}}
+              'C': {'train': os.path.join(DATA_DIR, 'train', 'C_indiv_train.csv'), 
+                    'test':  os.path.join(DATA_DIR, 'test', 'C_indiv_test.csv')}}
 
 # load training data
 a_train = pd.read_csv(data_paths['A']['train'], index_col='id')
@@ -100,6 +100,7 @@ def pre_process_data(df, enforce_cols=None):
 print("Country A")
 aX_train = pre_process_data(a_train.drop('poor', axis=1))
 ay_train = np.ravel(a_train.poor)
+print(aX_train.head())
 
 print("\nCountry B")
 bX_train = pre_process_data(b_train.drop('poor', axis=1))
@@ -214,7 +215,7 @@ model = Sequential()
 #model = Model(inputs=modelInput, outputs=modelDense)
 
 # Add an input layer
-model.add(Dense(12, activation='relu', input_shape=(253,)))
+model.add(Dense(12, activation='relu', input_shape=(859,)))
 # Add one hidden layer
 model.add(Dense(8, activation='relu'))
 # Add an output layer
