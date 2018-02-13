@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from keras.models import Sequential, Model
 from keras.layers import Dense, Input
-
+from keras import optimizers
 
 # data directory
 DATA_DIR = os.path.join('../..', 'pover-t', 'data')
@@ -99,8 +99,22 @@ def pre_process_data(df, enforce_cols=None):
 
 print("Country A")
 aX_train = pre_process_data(a_train.drop('poor', axis=1))
-ay_train = np.ravel(a_train.poor)
+ay_train_temp = np.ravel(a_train.poor)
 print(aX_train.head())
+
+ay_train_temp.flatten()
+
+ay_train_list = []
+
+for item in range(0, 8203):
+    if (ay_train_temp[item] == False):
+        ay_train_list.append(0)
+    else:
+        ay_train_list.append(1)
+
+ay_train = np.asarray(ay_train_list)
+
+#print(ay_train.tolist())
 
 print("\nCountry B")
 bX_train = pre_process_data(b_train.drop('poor', axis=1))
@@ -188,26 +202,6 @@ print(submission.tail())
 
 print("\n\n=================== KERAS  ==========================\n\n")
 
-#rowNum = 0
-#colNum = 0
-#for column in a_indiv_train:
-    #rowNum = 0
-    #for row in a_indiv_train[column]:
-        #a_indiv_train.iloc[rowNum,colNum] = abs(hash(row)) % (10 ** 8)
-        #rowNum += 1
-    #colNum += 1
-
-#a_indiv_train.to_csv("data/train/A_indiv_train_mod.csv")
-
-#Keras tutorial
-# Need to convert pandas dataframe to numpy array for Keras input
-#a_Xarr = a_train[['maLAYXwi']].as_matrix()
-#np.reshape(a_Xarr, (1, 8203))
-#print(a_Xarr)
-#print(a_Xarr.shape)
-#a_Yarr = a_train[['poor']].as_matrix()
-#print(a_Yarr)
-
 # Initialize the constructor
 model = Sequential()
 #modelInput = Input(shape=(8023, 1))
@@ -219,7 +213,7 @@ model.add(Dense(12, activation='relu', input_shape=(859,)))
 # Add one hidden layer
 model.add(Dense(8, activation='relu'))
 # Add an output layer
-model.add(Dense(1, activation='sigmoid'))
+model.add(Dense(1, activation='softmax'))
 
 model.output_shape
 model.summary()
@@ -228,9 +222,12 @@ model.get_weights()
 
 # Compile the model and fit the model to the data
 model.compile(loss='binary_crossentropy',
-              optimizer='adam',
+              optimizer=optimizers.Adam(lr=0.001),
               metrics=['accuracy'])
 
-model.fit(aX_train, ay_train, epochs=20, batch_size=1, verbose=1)
+model.fit(aX_train, ay_train, epochs=1, batch_size=1, verbose=1)
+score = model.evaluate(aX_train, ay_train, verbose=1)
+print(score)
 
-#y_pred = model.predict(test_set)
+a_pred = model.predict_classes(a_test)
+print(a_pred.tolist())

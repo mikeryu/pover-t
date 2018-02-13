@@ -1,0 +1,4 @@
+Prototype 1 is located in nn.py, which is a simple Keras neural network with one
+hidden layer and default parameters. It's been trained on one country but
+predictions are not reliable yet. For our next step, we will continue our
+research, modify parameters and layers, and fine tune the predictions. 
