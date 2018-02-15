@@ -18,14 +18,14 @@ A_TRAIN_HHOLD = os.path.join(DATA_DIR, 'train', 'A_hhold_train.csv')
 B_TRAIN_HHOLD = os.path.join(DATA_DIR, 'train', 'B_hhold_train.csv')
 C_TRAIN_HHOLD = os.path.join(DATA_DIR, 'train', 'C_hhold_train.csv')
 A_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')
-B_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')
-C_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')
+B_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'B_hhold_test.csv')
+C_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'C_hhold_test.csv')
 A_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'A_indiv_train.csv')
-B_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'A_indiv_train.csv')
-C_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'A_indiv_train.csv')
+B_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'B_indiv_train.csv')
+C_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'C_indiv_train.csv')
 A_TEST_IND = os.path.join(DATA_DIR, 'test', 'A_indiv_test.csv')
-B_TEST_IND = os.path.join(DATA_DIR, 'test', 'A_indiv_test.csv')
-C_TEST_IND = os.path.join(DATA_DIR, 'test', 'A_indiv_test.csv')
+B_TEST_IND = os.path.join(DATA_DIR, 'test', 'B_indiv_test.csv')
+C_TEST_IND = os.path.join(DATA_DIR, 'test', 'C_indiv_test.csv')
 
 data_paths = {'A': {'train': A_TRAIN_HHOLD, 'test': A_TEST_HHOLD},
     'B': {'train': B_TRAIN_HHOLD, 'test': B_TEST_HHOLD},
@@ -65,8 +65,8 @@ def main():
         bX_train_hhold, bX_train_ind, cX_train_hhold, cX_train_ind)
 
     # Train and predict over the data sets
-    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold, 859)
-#    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold, 1432)
+    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
+    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
 #    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
 #    a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
 #        a_test_ind)
@@ -75,36 +75,11 @@ def main():
 #    c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
 #        c_test_hhold)
 
-def create_NN():
+def train_and_predict(train, ids, test):
     model = Sequential()
 
     # Add an input layer
-    model.add(Dense(24, activation='relu', input_shape=(859,)))
-
-    # Add two hidden layers
-    model.add(Dense(12, activation='relu'))
-    model.add(Dense(12, activation='softmax'))
-
-    # Add an output layer
-    model.add(Dense(1, activation='sigmoid'))
-
-    model.output_shape
-    model.summary()
-    model.get_config()
-    model.get_weights()
-
-    # Compile the model and fit the model to the data
-    model.compile(loss='binary_crossentropy',
-              optimizer='sgd',
-              metrics=['accuracy'])
-
-    return model
-
-def train_and_predict(train, ids, test, shape_size):
-    model = Sequential()
-
-    # Add an input layer
-    model.add(Dense(12, activation='relu', input_shape=(shape_size,)))
+    model.add(Dense(12, activation='relu', input_shape=(train.shape[1],)))
     # Add one hidden layer
     model.add(Dense(8, activation='relu'))
     # Add an output layer
@@ -119,7 +94,7 @@ def train_and_predict(train, ids, test, shape_size):
                   optimizer=optimizers.Adam(lr=0.001),
                   metrics=['accuracy'])
 
-    model.fit(train, ids, epochs=1, batch_size=1, verbose=1)
+    model.fit(train, ids, epochs=1, batch_size=24, verbose=1)
     score = model.evaluate(train, ids, verbose=1)
     print(score)
 
