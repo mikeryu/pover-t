@@ -64,13 +64,9 @@ def main():
         c_test_ind = read_test_data(aX_train_hhold, aX_train_ind,\
         bX_train_hhold, bX_train_ind, cX_train_hhold, cX_train_ind)
 
-#    print(aX_train_hhold.shape)
-#    print(bX_train_hhold.shape)
-#    print(cX_train_hhold.shape)
-
     # Train and predict over the data sets
-    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
-#    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
+    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold, 859)
+#    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold, 1432)
 #    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
 #    a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
 #        a_test_ind)
@@ -104,11 +100,11 @@ def create_NN():
 
     return model
 
-def train_and_predict(train, ids, test):
+def train_and_predict(train, ids, test, shape_size):
     model = Sequential()
 
     # Add an input layer
-    model.add(Dense(12, activation='relu', input_shape=(train.shape[1],)))
+    model.add(Dense(12, activation='relu', input_shape=(shape_size,)))
     # Add one hidden layer
     model.add(Dense(8, activation='relu'))
     # Add an output layer
