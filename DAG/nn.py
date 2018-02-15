@@ -17,12 +17,12 @@ DATA_DIR = os.path.join('../..', 'pover-t', 'data')
 A_TRAIN_HHOLD = os.path.join(DATA_DIR, 'train', 'A_hhold_train.csv')
 B_TRAIN_HHOLD = os.path.join(DATA_DIR, 'train', 'B_hhold_train.csv')
 C_TRAIN_HHOLD = os.path.join(DATA_DIR, 'train', 'C_hhold_train.csv')
-A_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')
-B_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'B_hhold_test.csv')
-C_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'C_hhold_test.csv')
 A_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'A_indiv_train.csv')
 B_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'B_indiv_train.csv')
 C_TRAIN_IND = os.path.join(DATA_DIR, 'train', 'C_indiv_train.csv')
+A_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'A_hhold_test.csv')
+B_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'B_hhold_test.csv')
+C_TEST_HHOLD = os.path.join(DATA_DIR, 'test', 'C_hhold_test.csv')
 A_TEST_IND = os.path.join(DATA_DIR, 'test', 'A_indiv_test.csv')
 B_TEST_IND = os.path.join(DATA_DIR, 'test', 'B_indiv_test.csv')
 C_TEST_IND = os.path.join(DATA_DIR, 'test', 'C_indiv_test.csv')
@@ -60,6 +60,7 @@ def main():
     cX_train_ind = preprocess_data(c_train_ind.drop('poor', axis=1))
     cY_train_ind = np.ravel(c_train_ind.poor)
 
+    print("\nTest Data")
     a_test_hhold, b_test_hhold, c_test_hhold, a_test_ind, b_test_ind,\
         c_test_ind = read_test_data(aX_train_hhold, aX_train_ind,\
         bX_train_hhold, bX_train_ind, cX_train_hhold, cX_train_ind)
@@ -79,7 +80,7 @@ def train_and_predict(train, ids, test):
     model = Sequential()
 
     # Add an input layer
-    model.add(Dense(12, activation='relu', input_shape=(train.shape[1],)))
+    model.add(Dense(24, activation='relu', input_shape=(train.shape[1],)))
     # Add one hidden layer
     model.add(Dense(8, activation='relu'))
     # Add an output layer
@@ -98,6 +99,9 @@ def train_and_predict(train, ids, test):
     score = model.evaluate(train, ids, verbose=1)
     print(score)
 
+    print(train.shape)
+    print(test.shape)
+
     preds = model.predict_classes(test)
     print(preds.tolist())
 
@@ -115,15 +119,14 @@ def read_train_data():
     print("\n\n=============================================\n\n")
     print("A Training")
     print(a_train.head())
+    print(a_train.info())
     print("\n\n=============================================\n\n")
     print("B Training")
     print(b_train.head())
+    print(b_train.info())
     print("\n\n=============================================\n\n")
     print("C Training")
     print(c_train.head())
-    print("\n\n=============================================\n\n")
-    print(a_train.info())
-    print(b_train.info())
     print(c_train.info())
 
     return a_train, b_train, c_train, a_indiv_train, b_indiv_train,\
@@ -143,9 +146,12 @@ def read_test_data(aX_train, bX_train, cX_train, aX_train_ind, bX_train_ind,\
     a_test = preprocess_data(a_test, enforce_cols=aX_train.columns)
     b_test = preprocess_data(b_test, enforce_cols=bX_train.columns)
     c_test = preprocess_data(c_test, enforce_cols=cX_train.columns)
-    a_indiv_test = preprocess_data(a_test, enforce_cols=aX_train_ind.columns)
-    b_indiv_test = preprocess_data(b_test, enforce_cols=bX_train_ind.columns)
-    c_indiv_test = preprocess_data(c_test, enforce_cols=cX_train_ind.columns)
+    a_indiv_test = preprocess_data(a_indiv_test, \
+        enforce_cols=aX_train_ind.columns)
+    b_indiv_test = preprocess_data(b_indiv_test, \
+        enforce_cols=bX_train_ind.columns)
+    c_indiv_test = preprocess_data(c_indiv_test, \
+        enforce_cols=cX_train_ind.columns)
 
     return a_test, b_test, c_test, a_indiv_test, b_indiv_test, c_indiv_test
 
