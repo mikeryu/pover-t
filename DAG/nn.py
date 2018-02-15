@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from keras.models import Sequential, Model
 from keras.layers import Dense, Input
-
+from keras import optimizers
 
 # data directory
 DATA_DIR = os.path.join('../..', 'pover-t', 'data')
@@ -64,18 +64,16 @@ def main():
         c_test_ind = read_test_data(aX_train_hhold, aX_train_ind,\
         bX_train_hhold, bX_train_ind, cX_train_hhold, cX_train_ind)
 
-    model = create_NN()
-
     # Train and predict over the data sets
-    a_preds = train_and_predict(model, aX_train_hhold, aY_train, a_test_hhold)
-    b_preds = train_and_predict(model, bX_train_hhold, bY_train, b_test_hhold)
-    c_preds = train_and_predict(model, cX_train_hhold, cY_train, c_test_hhold)
-    a_preds_ind = train_and_predict(model, aX_train_ind, aY_train_ind,\
-        a_test_ind)
-    b_preds_ind = train_and_predict(model, bX_train_ind, bY_train_ind,\
-        b_test_ind)
-    c_preds_ind = train_and_predict(model, cX_train_ind, cY_train_ind,\
-        c_test_hhold)
+    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
+#    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
+#    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
+#    a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
+#        a_test_ind)
+#    b_preds_ind = train_and_predict(bX_train_ind, bY_train_ind,\
+#        b_test_ind)
+#    c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
+#        c_test_hhold)
 
 def create_NN():
     model = Sequential()
@@ -102,9 +100,33 @@ def create_NN():
 
     return model
 
-def train_and_predict(model, train, ids, test):
-    model.fit(train.get_values(), ids, epochs=20, batch_size=72, verbose=1)
-    return model.predict(test.get_values(), batch_size=72)
+def train_and_predict(train, ids, test):
+    model = Sequential()
+
+    # Add an input layer
+    model.add(Dense(12, activation='relu', input_shape=(train.shape[1],)))
+    # Add one hidden layer
+    model.add(Dense(8, activation='relu'))
+    # Add an output layer
+    model.add(Dense(1, activation='softmax'))
+    model.output_shape
+    model.summary()
+    model.get_config()
+    model.get_weights()
+
+    # Compile the model and fit the model to the data
+    model.compile(loss='binary_crossentropy',
+                  optimizer=optimizers.Adam(lr=0.001),
+                  metrics=['accuracy'])
+
+    model.fit(train, ids, epochs=1, batch_size=1, verbose=1)
+    score = model.evaluate(train, ids, verbose=1)
+    print(score)
+
+    preds = model.predict_classes(test)
+    print(preds.tolist())
+
+    return preds
 
 def read_train_data():
     # load training data
