@@ -1,0 +1,12 @@
+Prototype 1 is located in nn.py, which is a simple Keras neural network with one
+hidden layer and default parameters. It's been trained on one country but
+predictions are not reliable yet. For our next step, we will continue our
+research, modify parameters and layers, and fine tune the predictions. 
+
+In order to run the nn.py python script, you must have python 3.6. Furthermore, you
+also have to install the packages inside the requirements.txt file. From the
+command line, type "pip3 install -r requirements.txt".
+
+The script outputs several different things, just focus on the output following
+the KERAS headline. In the output, the prediction method returns which class the data
+falls under, 1 for poor and 0 for not poor.
