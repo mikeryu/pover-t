@@ -132,7 +132,7 @@ def read_train_data():
     return a_train, b_train, c_train, a_indiv_train, b_indiv_train,\
         c_indiv_train
 
-def read_test_data(aX_train, bX_train, cX_train, aX_train_ind, bX_train_ind,\
+def read_test_data(aX_train, aX_train_ind, bX_train, bX_train_ind, cX_train,\
     cX_train_ind):
     # load training data
     a_test = pd.read_csv(data_paths['A']['test'], index_col='id')
@@ -146,6 +146,7 @@ def read_test_data(aX_train, bX_train, cX_train, aX_train_ind, bX_train_ind,\
     a_test = preprocess_data(a_test, enforce_cols=aX_train.columns)
     b_test = preprocess_data(b_test, enforce_cols=bX_train.columns)
     c_test = preprocess_data(c_test, enforce_cols=cX_train.columns)
+
     a_indiv_test = preprocess_data(a_indiv_test, \
         enforce_cols=aX_train_ind.columns)
     b_indiv_test = preprocess_data(b_indiv_test, \
