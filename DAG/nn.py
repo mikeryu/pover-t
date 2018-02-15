@@ -74,7 +74,7 @@ def main():
     b_preds_ind = train_and_predict(bX_train_ind, bY_train_ind,\
         b_test_ind)
     c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
-        c_test_hhold)
+        c_test_ind)
 
 def train_and_predict(train, ids, test):
     model = Sequential()
@@ -98,9 +98,6 @@ def train_and_predict(train, ids, test):
     model.fit(train, ids, epochs=1, batch_size=24, verbose=1)
     score = model.evaluate(train, ids, verbose=1)
     print(score)
-
-    print(train.shape)
-    print(test.shape)
 
     preds = model.predict_classes(test)
     print(preds.tolist())
