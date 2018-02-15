@@ -86,24 +86,25 @@ def train_and_predict(train, ids, test):
     model = Sequential()
 
     # Add an input layer
-    model.add(Dense(24, activation='relu', input_shape=(train.shape[1],)))
+    model.add(Dense(72, activation='relu', input_shape=(train.shape[1],)))
     # Add some hidden layers
-    model.add(Dense(24, activation='relu'))
-    model.add(Dense(24, activation='relu'))
-    model.add(Dense(24, activation='softmax'))
+    model.add(Dense(36, activation='relu'))
+    model.add(Dense(36, activation='relu'))
+    model.add(Dense(36, activation='sigmoid'))
+    model.add(Dense(36, activation='sigmoid'))
     # Add an output layer
-    model.add(Dense(1, activation='softmax'))
+    model.add(Dense(1, activation='sigmoid'))
     model.output_shape
     model.summary()
     model.get_config()
     model.get_weights()
 
     # Compile the model and fit the model to the data
-    model.compile(loss='binary_crossentropy',
-                  optimizer=optimizers.Adam(lr=0.001),
+    model.compile(loss='mean_squared_error',
+                  optimizer='sgd',
                   metrics=['accuracy'])
 
-    model.fit(train, ids, epochs=1, batch_size=24, verbose=1)
+    model.fit(train, ids, epochs=20, batch_size=36, verbose=1)
     score = model.evaluate(train, ids, verbose=1)
     print(score)
 
