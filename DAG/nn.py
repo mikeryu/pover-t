@@ -67,6 +67,12 @@ def main():
 
     # Train and predict over the data sets
     a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
+    a_sub = make_country_sub(a_preds, a_test_hhold, 'A')
+
+    print(a_sub)
+
+    return 0
+
     b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
     c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
     a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
@@ -81,8 +87,10 @@ def train_and_predict(train, ids, test):
 
     # Add an input layer
     model.add(Dense(24, activation='relu', input_shape=(train.shape[1],)))
-    # Add one hidden layer
-    model.add(Dense(8, activation='relu'))
+    # Add some hidden layers
+    model.add(Dense(24, activation='relu'))
+    model.add(Dense(24, activation='relu'))
+    model.add(Dense(24, activation='softmax'))
     # Add an output layer
     model.add(Dense(1, activation='softmax'))
     model.output_shape
@@ -99,8 +107,7 @@ def train_and_predict(train, ids, test):
     score = model.evaluate(train, ids, verbose=1)
     print(score)
 
-    preds = model.predict_classes(test)
-    print(preds.tolist())
+    preds = model.predict(test)
 
     return preds
 
@@ -184,6 +191,21 @@ def preprocess_data(df, enforce_cols=None):
     df.fillna(0, inplace=True)
 
     return df
+
+# save submission
+def make_country_sub(preds, test_feat, country):
+    # make sure we code the country correctly
+    country_codes = ['A', 'B', 'C']
+
+    # get just the poor probabilities
+    country_sub = pd.DataFrame(data=preds[:, 0],  # proba p=1
+                               columns=['poor'],
+                               index=test_feat.index)
+
+
+    # add the country code for joining later
+    country_sub["country"] = country
+    return country_sub[["country", "poor"]]
 
 if __name__ == '__main__':
     main()
