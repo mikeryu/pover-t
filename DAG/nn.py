@@ -68,13 +68,13 @@ def main():
     # Train and predict over the data sets
     a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
     b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
-#    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
-#    a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
-#        a_test_ind)
-#    b_preds_ind = train_and_predict(bX_train_ind, bY_train_ind,\
-#        b_test_ind)
-#    c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
-#        c_test_hhold)
+    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
+    a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
+        a_test_ind)
+    b_preds_ind = train_and_predict(bX_train_ind, bY_train_ind,\
+        b_test_ind)
+    c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
+        c_test_hhold)
 
 def train_and_predict(train, ids, test):
     model = Sequential()
