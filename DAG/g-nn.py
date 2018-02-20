@@ -41,7 +41,7 @@ def main():
         c_train_ind = read_train_data()
 
     print("Country A")
-    aX_train_hhold = preprocess_data(a_train_hhold.drop('poor', axis=1))
+    aX_train_hhold = preprocess_data(a_train_hhold.drop(columns=['poor']))
     aY_train = np.ravel(a_train_hhold.poor)
 
     aX_train_ind = preprocess_data(a_train_ind.drop('poor', axis=1))
@@ -70,18 +70,42 @@ def main():
     a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
     a_sub = make_country_sub(a_preds, a_test_hhold, 'A')
 
-    print(a_sub)
+    #print(a_sub)
+    print("aY_train.shape: ")
+    print(aY_train.shape)
+    print("a_preds.shape: ")
+    print(a_preds.shape)
 
-    return 0
+    #return 0
 
     b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
+    b_sub = make_country_sub(b_preds, b_test_hhold, 'B')
+
     c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
+    c_sub = make_country_sub(c_preds, c_test_hhold, 'C')
+
     a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
         a_test_ind)
     b_preds_ind = train_and_predict(bX_train_ind, bY_train_ind,\
         b_test_ind)
     c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
         c_test_ind)
+
+
+    # combine predictions and save for submission
+    submission = pd.concat([a_sub, b_sub, c_sub])
+
+    print("Submission head:")
+    print(submission.head())
+    print("\nSubmission tail:")
+    print(submission.tail())
+
+    #print("Converting to csv for submission...")
+    #submission.to_csv('nn_submission_v1.csv')
+    #print("All done")
+
+
+
 
 def train_and_predict(train, ids, test):
     model = Sequential()
@@ -95,9 +119,13 @@ def train_and_predict(train, ids, test):
     model.add(Dense(36, activation='sigmoid'))
     # Add an output layer
     model.add(Dense(1, activation='sigmoid'))
+    print("Model output shape:")
     model.output_shape
+    print("Model summary:")
     model.summary()
+    print("Model config:")
     model.get_config()
+    print("Model weights:")
     model.get_weights()
 
     # Compile the model and fit the model to the data
@@ -208,6 +236,7 @@ def make_country_sub(preds, test_feat, country):
     # add the country code for joining later
     country_sub["country"] = country
     return country_sub[["country", "poor"]]
+
 
 # From previous keras version
 # https://github.com/keras-team/keras/commit/a56b1a55182acf061b1eb2e2c86b48193a0e88f7 
