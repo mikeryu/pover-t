@@ -40,57 +40,47 @@ def main():
     a_train_hhold, b_train_hhold, c_train_hhold, a_train_ind, b_train_ind,\
         c_train_ind = read_train_data()
 
-    print("Country A")
-    aX_train_hhold = preprocess_data(a_train_hhold.drop(columns=['poor']))
-    aY_train = np.ravel(a_train_hhold.poor)
+    # Merge individual and household training data
+    a_data = pd.concat([a_train_ind, a_train_hhold])
+    b_data = pd.concat([b_train_ind, b_train_hhold])
+    c_data = pd.concat([c_train_ind, c_train_hhold])
 
-    aX_train_ind = preprocess_data(a_train_ind.drop('poor', axis=1))
-    aY_train_ind = np.ravel(a_train_ind.poor)
+    # Process the training data
+    print("Country A")
+    a_train = preprocess_data(a_data.drop(columns=['poor']))
+    a_labels = np.ravel(a_data.poor)
 
     print("\nCountry B")
-    bX_train_hhold = preprocess_data(b_train_hhold.drop('poor', axis=1))
-    bY_train = np.ravel(b_train_hhold.poor)
-
-    bX_train_ind = preprocess_data(b_train_ind.drop('poor', axis=1))
-    bY_train_ind = np.ravel(b_train_ind.poor)
+    b_train = preprocess_data(b_data.drop(columns=['poor']))
+    b_labels = np.ravel(b_data.poor)
 
     print("\nCountry C")
-    cX_train_hhold = preprocess_data(c_train_hhold.drop('poor', axis=1))
-    cY_train = np.ravel(c_train_hhold.poor)
-
-    cX_train_ind = preprocess_data(c_train_ind.drop('poor', axis=1))
-    cY_train_ind = np.ravel(c_train_ind.poor)
+    c_train = preprocess_data(c_data.drop(columns=['poor']))
+    c_labels = np.ravel(c_data.poor)
 
     print("\nTest Data")
     a_test_hhold, b_test_hhold, c_test_hhold, a_test_ind, b_test_ind,\
-        c_test_ind = read_test_data(aX_train_hhold, aX_train_ind,\
-        bX_train_hhold, bX_train_ind, cX_train_hhold, cX_train_ind)
+        c_test_ind = read_test_data()
+
+    # Merge individual and household test data
+    #a_test_data = pd.concat([a_test_ind, a_test_hhold])
+    #b_test_data = pd.concat([b_test_ind, b_test_hhold])
+    #c_test_data = pd.concat([c_test_ind, c_test_hhold])
+
+    #Process the test data
+    a_test = preprocess_data(a_test_hhold, enforce_cols=a_train.columns)
+    b_test = preprocess_data(b_test_hhold, enforce_cols=b_train.columns)
+    c_test = preprocess_data(c_test_hhold, enforce_cols=c_train.columns)
 
     # Train and predict over the data sets
-    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
-    a_sub = make_country_sub(a_preds, a_test_hhold, 'A')
+    a_preds = train_and_predict(a_train, a_labels, a_test)
+    a_sub = make_country_sub(a_preds, a_test, 'A')
 
-    #print(a_sub)
-    print("aY_train.shape: ")
-    print(aY_train.shape)
-    print("a_preds.shape: ")
-    print(a_preds.shape)
+    b_preds = train_and_predict(b_train, b_labels, b_test)
+    b_sub = make_country_sub(b_preds, b_test, 'B')
 
-    #return 0
-
-    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
-    b_sub = make_country_sub(b_preds, b_test_hhold, 'B')
-
-    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
-    c_sub = make_country_sub(c_preds, c_test_hhold, 'C')
-
-    a_preds_ind = train_and_predict(aX_train_ind, aY_train_ind,\
-        a_test_ind)
-    b_preds_ind = train_and_predict(bX_train_ind, bY_train_ind,\
-        b_test_ind)
-    c_preds_ind = train_and_predict(cX_train_ind, cY_train_ind,\
-        c_test_ind)
-
+    c_preds = train_and_predict(c_train, c_labels, c_test)
+    c_sub = make_country_sub(c_preds, c_test, 'C')
 
     # combine predictions and save for submission
     submission = pd.concat([a_sub, b_sub, c_sub])
@@ -100,12 +90,9 @@ def main():
     print("\nSubmission tail:")
     print(submission.tail())
 
-    #print("Converting to csv for submission...")
-    #submission.to_csv('nn_submission_v1.csv')
-    #print("All done")
-
-
-
+    print("Converting to csv for submission...")
+    submission.to_csv('merge_nn_submission_v2.csv')
+    print("All done")
 
 def train_and_predict(train, ids, test):
     model = Sequential()
@@ -150,43 +137,30 @@ def read_train_data():
     b_indiv_train = pd.read_csv(ind_data_paths['B']['train'], index_col='id')
     c_indiv_train = pd.read_csv(ind_data_paths['C']['train'], index_col='id')
 
-    print("\n\n=============================================\n\n")
+    print("\n\n=============================================\n")
     print("A Training")
-    print(a_train.head())
+    #print(a_train.head())
     print(a_train.info())
-    print("\n\n=============================================\n\n")
+    print("\n\n=============================================\n")
     print("B Training")
-    print(b_train.head())
+    #print(b_train.head())
     print(b_train.info())
-    print("\n\n=============================================\n\n")
+    print("\n\n=============================================\n")
     print("C Training")
-    print(c_train.head())
+    #print(c_train.head())
     print(c_train.info())
 
     return a_train, b_train, c_train, a_indiv_train, b_indiv_train,\
         c_indiv_train
 
-def read_test_data(aX_train, aX_train_ind, bX_train, bX_train_ind, cX_train,\
-    cX_train_ind):
-    # load training data
+def read_test_data():
+    # load test data
     a_test = pd.read_csv(data_paths['A']['test'], index_col='id')
     b_test = pd.read_csv(data_paths['B']['test'], index_col='id')
     c_test = pd.read_csv(data_paths['C']['test'], index_col='id')
     a_indiv_test = pd.read_csv(ind_data_paths['A']['test'], index_col='id')
     b_indiv_test = pd.read_csv(ind_data_paths['B']['test'], index_col='id')
     c_indiv_test = pd.read_csv(ind_data_paths['C']['test'], index_col='id')
-
-    # process the test data
-    a_test = preprocess_data(a_test, enforce_cols=aX_train.columns)
-    b_test = preprocess_data(b_test, enforce_cols=bX_train.columns)
-    c_test = preprocess_data(c_test, enforce_cols=cX_train.columns)
-
-    a_indiv_test = preprocess_data(a_indiv_test, \
-        enforce_cols=aX_train_ind.columns)
-    b_indiv_test = preprocess_data(b_indiv_test, \
-        enforce_cols=bX_train_ind.columns)
-    c_indiv_test = preprocess_data(c_indiv_test, \
-        enforce_cols=cX_train_ind.columns)
 
     return a_test, b_test, c_test, a_indiv_test, b_indiv_test, c_indiv_test
 
