@@ -39,105 +39,42 @@ ind_data_paths = {'A': {'train': A_TRAIN_IND, 'test': A_TEST_IND},
 def main():
     a_train_hhold, b_train_hhold, c_train_hhold, a_train_ind, b_train_ind,\
         c_train_ind = read_train_data()
-    #print("a_train_ind.shape")
-    #print(a_train_ind.shape)
-    print("a_train_hhold.shape")
-    print(a_train_hhold.shape)
-    print("b_train_hhold.shape")
-    print(b_train_hhold.shape)
-    print("c_train_hhold.shape")
-    print(c_train_hhold.shape)
-    print("a_train_ind.shape")
-    print(a_train_ind.shape)
-    print("b_train_ind.shape")
-    print(b_train_ind.shape)
-    print("c_train_ind.shape")
-    print(c_train_ind.shape)
 
-    # Check for duplicate column names between individual and household
-    a_hhold_headers = list(a_train_hhold)
-    b_hhold_headers = list(b_train_hhold)
-    c_hhold_headers = list(c_train_hhold)
-    a_ind_headers = list(a_train_ind)
-    b_ind_headers = list(b_train_ind)
-    c_ind_headers = list(c_train_ind)
-    print("A Duplicate columns")
-    print(set(a_hhold_headers).intersection(a_ind_headers))
-    print("B Duplicate columns")
-    print(set(b_hhold_headers).intersection(b_ind_headers))
-    print("C Duplicate columns")
-    print(set(c_hhold_headers).intersection(c_ind_headers))
-
-    # Add columns of aggregated individual data to household data
-    a_group = group_data(a_train_ind, a_train_hhold)
-    print("a_group.shape")
-    print(a_group.shape)
-    print(a_group)
-
-    # B individual data has lots of empty cells - need to clean it up
-    b_group = remove_null_values_and_group_data(b_train_ind, b_train_hhold)
-    print("b_group.shape")
-    print(b_group.shape)
-
-    c_group = group_data(c_train_ind, c_train_hhold)
-    print("c_group.shape")
-    print(c_group.shape)
-
-    # Trim data that gives same answers for poor and non-poor
-    #a_group_trim = trim_non_unique(a_group, 1)
-    #print("a_group_trim.shape")
-    #print(a_group_trim.shape)
-    #b_group_trim = trim_non_unique(b_group, 1)
-    #print("b_group_trim.shape")
-    #print(b_group_trim.shape)
-    #c_group_trim = trim_non_unique(c_group, 1)
-    #print("c_group_trim.shape")
-    #print(c_group_trim.shape)
-
-    #return 0
-
-    a_data = a_group
-    b_data = b_group
-    c_data = c_group
-
-    # Process the training data
     print("Country A")
-    a_train = preprocess_data(a_data.drop(columns=['poor']))
-    a_labels = np.ravel(a_data.poor)
+    aX_train_hhold = preprocess_data(a_train_hhold.drop('poor', axis=1))
+    aY_train = np.ravel(a_train_hhold.poor)
+
+    aX_train_ind = preprocess_data(a_train_ind.drop('poor', axis=1))
+    aY_train_ind = np.ravel(a_train_ind.poor)
 
     print("\nCountry B")
-    b_train = preprocess_data(b_data.drop(columns=['poor']))
-    b_labels = np.ravel(b_data.poor)
+    bX_train_hhold = preprocess_data(b_train_hhold.drop('poor', axis=1))
+    bY_train = np.ravel(b_train_hhold.poor)
+
+    bX_train_ind = preprocess_data(b_train_ind.drop('poor', axis=1))
+    bY_train_ind = np.ravel(b_train_ind.poor)
 
     print("\nCountry C")
-    c_train = preprocess_data(c_data.drop(columns=['poor']))
-    c_labels = np.ravel(c_data.poor)
+    cX_train_hhold = preprocess_data(c_train_hhold.drop('poor', axis=1))
+    cY_train = np.ravel(c_train_hhold.poor)
+
+    cX_train_ind = preprocess_data(c_train_ind.drop('poor', axis=1))
+    cY_train_ind = np.ravel(c_train_ind.poor)
 
     print("\nTest Data")
     a_test_hhold, b_test_hhold, c_test_hhold, a_test_ind, b_test_ind,\
-        c_test_ind = read_test_data()
-
-    # DON'T USE THIS - CREATES THE WRONG SIZE TEST DATA FOR SUBMISSION
-    # Merge individual and household test data
-    #a_test_data = pd.concat([a_test_ind, a_test_hhold])
-    #b_test_data = pd.concat([b_test_ind, b_test_hhold])
-    #c_test_data = pd.concat([c_test_ind, c_test_hhold])
-
-    #Process the test data
-    a_test = preprocess_data(a_test_hhold, enforce_cols=a_train.columns)
-    b_test = preprocess_data(b_test_hhold, enforce_cols=b_train.columns)
-    c_test = preprocess_data(c_test_hhold, enforce_cols=c_train.columns)
+        c_test_ind = read_test_data(aX_train_hhold, aX_train_ind,\
+        bX_train_hhold, bX_train_ind, cX_train_hhold, cX_train_ind)
 
     # Train and predict over the data sets
-    a_preds = train_and_predict(a_train, a_labels, a_test)
-    a_sub = make_country_sub(a_preds, a_test, 'A')
+    a_preds = train_and_predict(aX_train_hhold, aY_train, a_test_hhold)
+    a_sub = make_country_sub(a_preds, a_test_hhold, 'A')
 
-    b_preds = train_and_predict(b_train, b_labels, b_test)
-    b_sub = make_country_sub(b_preds, b_test, 'B')
+    b_preds = train_and_predict(bX_train_hhold, bY_train, b_test_hhold)
+    b_sub = make_country_sub(b_preds, b_test_hhold, 'B')
 
-    c_preds = train_and_predict(c_train, c_labels, c_test)
-    c_sub = make_country_sub(c_preds, c_test, 'C')
-    print(c_sub)
+    c_preds = train_and_predict(cX_train_hhold, cY_train, c_test_hhold)
+    c_sub = make_country_sub(c_preds, c_test_hhold, 'C')
 
     # combine predictions and save for submission
     submission = pd.concat([a_sub, b_sub, c_sub])
@@ -148,93 +85,9 @@ def main():
     print(submission.tail())
 
     print("Converting to csv for submission...")
-    submission.to_csv('groupby_submission_4.csv')
+    submission.to_csv('submission_3_nn.csv')
     print("All done")
 
-
-# group_data takes in individual data
-# Creates a column of data aggregated by household id that consists of the most frequent
-# individual response
-# Example:
-# id      iid      cKfjueDD
-# 1       1        WkxyUi
-# 1       2        MhgpsA
-# 1       3        WkxyUi
-# Becomes
-# id      cKfjueDD
-# 1       WkxyUi     ------> where WkxyUi is the most frequent response from individuals in household 1
-# This new column is added to the household data by household id
-def group_data(idf, hdf):
-    print("\n ==== Group By ====")
-    # Get the column headers from the dataframe of individual data
-    headers = list(idf)
-    headers.remove('iid')
-    # Remove duplicate columns between individual and household
-    headers.remove('country')
-    headers.remove('poor')
-    # Special case of duplicate column in country B
-    if 'wJthinfa' in headers:
-        headers.remove('wJthinfa')
-
-    hhold_group = hdf
-
-    # Need to create new dataframe column of most frequent responses grouped by household id
-    for h in headers:
-        # Create a column that consists of the household id and the most frequent response value
-        new_column = idf.groupby('id')[[h]].agg(lambda x:x.value_counts().index[0])
-        # Add that column to the household data
-        hhold_group = pd.concat([hhold_group, new_column], axis=1, join_axes=[hhold_group.index])
-
-    # Add a column that consists of the count of individuals in a household
-    # Not sure how to add a column header (GkLMwxSq)
-    ind_count = idf.groupby('id')[['iid']].count()
-    hhold_group = pd.concat([hhold_group, ind_count], axis=1, join_axes=[hhold_group.index])
-
-    return hhold_group
-
-# remove_null_values_and_group_data handles the data that contains empty cells
-# The agg function in groupby does not work if there are no values (size 0)
-# This function separates the data into columns that have null values and columns that do not
-# The null values are removed before running aggregation and then those columns are concatenated to the original dataframe
-# The remaining columns are also aggregated and concatenated
-def remove_null_values_and_group_data(idf, hdf):
-    print("\n===========  REMOVE NULLS ==============")
-    # Get columns with empty cells (NaN values in dataframe)
-    cols_to_drop = idf.columns[idf.isna().any()].tolist()
-    hhold_group = hdf
-
-    for col in cols_to_drop:
-        # Remove rows with null values
-        idf_not_null = idf[[col]].dropna()
-        # Create a column that consists of the household id and the most frequent response value
-        new_column = idf_not_null.groupby('id')[[col]].agg(lambda x:x.value_counts().index[0])
-        # Add that column to the household data
-        hhold_group = pd.concat([hhold_group, new_column], axis=1, join_axes=[hhold_group.index])
-
-    #Create a new dataframe of the columns with NaN values
-    #nan_df = idf.loc[:, idf.isna().any()]
-
-    # Process the rest of the original dataframe
-    idf_not_nan = idf.drop(cols_to_drop, axis = 1)
-    print("idf_not_nan.shape")
-    print(idf_not_nan.shape)
-
-    return group_data(idf_not_nan, hhold_group)
-
-
-# Drop columns in data that have little to no variation (same answers for poor and non-poor)
-def trim_non_unique(df, max_nonuniques):
-    print("\n ======== TRIM DATA =========\n")
-    nonuniques = df.nunique()
-    cols_to_drop = [col for col in nonuniques.index if nonuniques[col] <= max_nonuniques]
-    # Need columans for poor and country
-    cols_to_drop.remove('poor')
-    cols_to_drop.remove('country')
-    #print(cols_to_drop)
-
-    df_trim = df.drop(cols_to_drop, axis=1)
-    print(df_trim.shape)
-    return df_trim
 
 
 def train_and_predict(train, ids, test):
@@ -244,18 +97,14 @@ def train_and_predict(train, ids, test):
     model.add(Dense(72, activation='relu', input_shape=(train.shape[1],)))
     # Add some hidden layers
     model.add(Dense(36, activation='relu'))
-    model.add(Dense(36, activation='relu'))
-    model.add(Dense(36, activation='sigmoid'))
+    #model.add(Dense(36, activation='relu'))
+    #model.add(Dense(36, activation='sigmoid'))
     model.add(Dense(36, activation='sigmoid'))
     # Add an output layer
     model.add(Dense(1, activation='sigmoid'))
-    print("Model output shape:")
     model.output_shape
-    print("Model summary:")
     model.summary()
-    print("Model config:")
     model.get_config()
-    print("Model weights:")
     model.get_weights()
 
     # Compile the model and fit the model to the data
@@ -263,7 +112,7 @@ def train_and_predict(train, ids, test):
                   optimizer='sgd',
                   metrics=['accuracy', precision, recall, fmeasure])
 
-    model.fit(train, ids, epochs=20, batch_size=36, verbose=1)
+    model.fit(train, ids, epochs=50, batch_size=36, verbose=1)
     score = model.evaluate(train, ids, verbose=1)
     print(score)
 
@@ -280,30 +129,43 @@ def read_train_data():
     b_indiv_train = pd.read_csv(ind_data_paths['B']['train'], index_col='id')
     c_indiv_train = pd.read_csv(ind_data_paths['C']['train'], index_col='id')
 
-    print("\n=============================================\n")
+    print("\n\n=============================================\n\n")
     print("A Training")
-    #print(a_train.head())
+    print(a_train.head())
     print(a_train.info())
-    print("\n=============================================\n")
+    print("\n\n=============================================\n\n")
     print("B Training")
-    #print(b_train.head())
+    print(b_train.head())
     print(b_train.info())
-    print("\n=============================================\n")
+    print("\n\n=============================================\n\n")
     print("C Training")
-    #print(c_train.head())
+    print(c_train.head())
     print(c_train.info())
 
     return a_train, b_train, c_train, a_indiv_train, b_indiv_train,\
         c_indiv_train
 
-def read_test_data():
-    # load test data
+def read_test_data(aX_train, aX_train_ind, bX_train, bX_train_ind, cX_train,\
+    cX_train_ind):
+    # load training data
     a_test = pd.read_csv(data_paths['A']['test'], index_col='id')
     b_test = pd.read_csv(data_paths['B']['test'], index_col='id')
     c_test = pd.read_csv(data_paths['C']['test'], index_col='id')
     a_indiv_test = pd.read_csv(ind_data_paths['A']['test'], index_col='id')
     b_indiv_test = pd.read_csv(ind_data_paths['B']['test'], index_col='id')
     c_indiv_test = pd.read_csv(ind_data_paths['C']['test'], index_col='id')
+
+    # process the test data
+    a_test = preprocess_data(a_test, enforce_cols=aX_train.columns)
+    b_test = preprocess_data(b_test, enforce_cols=bX_train.columns)
+    c_test = preprocess_data(c_test, enforce_cols=cX_train.columns)
+
+    a_indiv_test = preprocess_data(a_indiv_test, \
+        enforce_cols=aX_train_ind.columns)
+    b_indiv_test = preprocess_data(b_indiv_test, \
+        enforce_cols=bX_train_ind.columns)
+    c_indiv_test = preprocess_data(c_indiv_test, \
+        enforce_cols=cX_train_ind.columns)
 
     return a_test, b_test, c_test, a_indiv_test, b_indiv_test, c_indiv_test
 
@@ -353,7 +215,6 @@ def make_country_sub(preds, test_feat, country):
     # add the country code for joining later
     country_sub["country"] = country
     return country_sub[["country", "poor"]]
-
 
 # From previous keras version
 # https://github.com/keras-team/keras/commit/a56b1a55182acf061b1eb2e2c86b48193a0e88f7 
