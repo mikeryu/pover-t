@@ -87,9 +87,9 @@ def train_and_predict(train, ids, test):
     model = Sequential()
 
     # Add an input layer
-    model.add(Dense(72, activation='relu', input_shape=(train.shape[1],)))
+    model.add(Dense(144, activation='relu', input_shape=(train.shape[1],)))
     # Add some hidden layers
-    model.add(Dense(36, activation='relu'))
+    model.add(Dense(72, activation='relu'))
     model.add(Dense(36, activation='relu'))
     model.add(Dense(36, activation='sigmoid'))
     model.add(Dense(36, activation='sigmoid'))
