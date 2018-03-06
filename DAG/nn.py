@@ -105,7 +105,7 @@ def train_and_predict(train, ids, test):
                   optimizer='sgd',
                   metrics=['accuracy', precision, recall, fmeasure])
 
-    model.fit(train, ids, epochs=20, batch_size=36, verbose=1)
+    model.fit(train, ids, epochs=50, batch_size=36, verbose=1)
     score = model.evaluate(train, ids, verbose=1)
     print(score)
 
