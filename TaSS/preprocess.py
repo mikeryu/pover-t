@@ -33,7 +33,9 @@ def enforce_columns(df, enforce_cols):
     return df
 
 def handle_missing_values(df):
-    return df.interpolate()
+    # df = df.fillna(np.nan)
+    # df = df.interpolate()
+    return df.fillna(df.mean())
 
 # Standardize continuous-value data and convert categorical data to numerical
 # Forces dataframe to have only columns present in enforce_cols

@@ -56,6 +56,10 @@ def classifier_comparison(feature_sets, labels, cross_validation=None):
     for name, clf in zip(names, classifiers):
         clf.fit(data_train, label_train)
         max_score = clf.score(data_test, label_test)
+        prediction_labels = clf.predict(data_test)
+
+        target_names = ['class 0', 'class 1']
+        print(classification_report(label_test, prediction_labels, target_names=target_names))
 
         if cross_validation:
             scores = cross_val_score(clf, feature_sets, labels, cv=cross_validation)
