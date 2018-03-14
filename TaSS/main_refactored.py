@@ -35,6 +35,9 @@ def preprocess_and_run_classification(labels, hh_test, hh_train, cv):
         X_train, y_train, X_test = preprocess_household_test_train_data(hh_train[i], hh_test[i])
         print("*" * 50, "DONE", end='\n\n')
 
+        print("dimensionality reduction")
+        X_train = learn.reduce_dimensionality(X_train)
+
         # train different classifiers and report on the result
         # TODO: consider precision/recall in addition to accuracy in selecting optimal classifier
         print("Classifier for", labels[i], "*" * 50)
@@ -47,7 +50,9 @@ def preprocess_and_run_classification(labels, hh_test, hh_train, cv):
 
 def preprocess_household_test_train_data(hh_train, hh_test):
     X_train = preprocess.pre_process_data(hh_train.drop('poor', axis=1))
+    # print(X_train)
     y_train = np.ravel(hh_train.poor)
+    # print(y_train)
     X_test = preprocess.pre_process_data(hh_test, enforce_cols=X_train.columns)
     return X_train, y_train, X_test
 

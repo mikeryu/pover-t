@@ -30,6 +30,14 @@ def train_model(features, labels, **kwargs):
 
     return model
 
+def reduce_dimensionality(feature_sets, num_dims=5):
+    feature_sets = feature_sets.values
+    # print(feature_sets)
+    pca = PCA(n_components=num_dims)
+    return pca.fit_transform(feature_sets)
+    # print(pca.explained_variance_ratio_)
+    # return feature_sets, optimal_pca
+
 # Try out several different classifiers with mostly default settings
 # Option for k-fold cross validation to get representative accuracy
 def classifier_comparison(feature_sets, labels, cross_validation=None):
