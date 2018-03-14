@@ -41,21 +41,23 @@ def reduce_dimensionality(feature_sets, num_dims=5):
 # Try out several different classifiers with mostly default settings
 # Option for k-fold cross validation to get representative accuracy
 def classifier_comparison(feature_sets, labels, cross_validation=None):
-    names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", #"Gaussian Process",
-             "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
-             "Naive Bayes", "QDA"]
+    names = [# "Nearest Neighbors", "Linear SVM", "RBF SVM", #"Gaussian Process",
+             # "Decision Tree", "Random Forest",
+             "Neural Net" #,
+             # "AdaBoost", "Naive Bayes", "QDA"
+    ]
 
     classifiers = [
-        KNeighborsClassifier(3),
-        SVC(kernel="linear", C=0.025),
-        SVC(gamma=2, C=1),
+        # KNeighborsClassifier(3),
+        # SVC(kernel="linear", C=0.025),
+        # SVC(gamma=2, C=1),
         #GaussianProcessClassifier(1.0 * RBF(1.0)),
-        DecisionTreeClassifier(max_depth=5),
-        RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
+        # DecisionTreeClassifier(max_depth=5),
+        # RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
         MLPClassifier(alpha=1),
-        AdaBoostClassifier(),
-        GaussianNB(),
-        QuadraticDiscriminantAnalysis()
+        # AdaBoostClassifier(),
+        # GaussianNB(),
+        # QuadraticDiscriminantAnalysis()
     ]
 
     data_train, data_test, label_train, label_test = train_test_split(feature_sets, labels, test_size=0.33)
